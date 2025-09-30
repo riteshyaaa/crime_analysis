@@ -7,15 +7,22 @@ import OverviewView from "./views/OverviewView";
 import TrendsView from "./views/TrendsView";
 import LocationsView from "./views/LocationsView";
 import CrimeTypesView from "./views/CrimeTypesView";
+import SignIn from "./components/SignIn.jsx"; // 👈 new import
 
 const App = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activeView, setActiveView] = useState("overview");
-  const { monthlyData, crimeByType, crimeByLocation } = useMemo(() => generateCrimeData(), []);
+  const { monthlyData, crimeByType, crimeByLocation } = useMemo(
+    () => generateCrimeData(),
+    []
+  );
 
   const renderActiveView = () => {
     switch (activeView) {
       case "overview":
-        return <OverviewView monthlyData={monthlyData} crimeByType={crimeByType} />;
+        return (
+          <OverviewView monthlyData={monthlyData} crimeByType={crimeByType} />
+        );
       case "trends":
         return <TrendsView monthlyData={monthlyData} />;
       case "locations":
@@ -23,9 +30,15 @@ const App = () => {
       case "types":
         return <CrimeTypesView crimeByType={crimeByType} />;
       default:
-        return <OverviewView monthlyData={monthlyData} crimeByType={crimeByType} />;
+        return (
+          <OverviewView monthlyData={monthlyData} crimeByType={crimeByType} />
+        );
     }
   };
+
+  if (!isLoggedIn) {
+    return <SignIn onLogin={() => setIsLoggedIn(true)} />; // 👈 show login first
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
@@ -35,7 +48,9 @@ const App = () => {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
               <Shield className="w-8 h-8 text-blue-600 mr-3" />
-              <h1 className="text-2xl font-bold text-gray-900">Crime Analytics Dashboard</h1>
+              <h1 className="text-2xl font-bold text-gray-900">
+                Crime Analytics Dashboard
+              </h1>
             </div>
             <div>
               <button className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
@@ -58,7 +73,8 @@ const App = () => {
       <footer className="bg-white border-t border-gray-200 mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <p className="text-center text-gray-600 text-sm">
-            Crime Analytics Dashboard • Data updated in real-time • Built for public safety insights
+            Crime Analytics Dashboard • Data updated in real-time • Built for
+            public safety insights
           </p>
         </div>
       </footer>
